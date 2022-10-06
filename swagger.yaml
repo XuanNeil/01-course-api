@@ -1,0 +1,173 @@
+openapi: 3.0.0
+info:
+  title: Course API
+  version: 0.0.1
+servers:
+  - url: http://localhost:3000/api/v1
+
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        description: register a new account
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: test@gmail.com
+              password: "***"
+      responses:
+        '201':
+          description: CREATED
+        '422':
+          $ref: '#/components/schemas/Error422'
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        description: login account
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: test@gmail.com
+              password: "***"
+      responses:
+        '200':
+          description: OK
+        '404':
+          $ref: '#/components/schemas/Error404'
+        '422':
+          $ref: '#/components/schemas/Error422'
+
+  /auth/refresh_token:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        description: generate a new accesstoken
+        content:
+          application/json:
+            schema:
+              properties:
+                refresh_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiYWRhY2E4NTMtOTlmOS00MDJiLWE4YzMtNjFiNTVlZWY2NGU4In0sImlhdCI6MTY2MDY0MDU2MywiZXhwIjoxNjYwNjQxMTYzfQ.kewTiEh-8nVXYlTPWjC9_XkpJ_nMonm_NWnCyAwiYVA"
+              required:
+                - refresh_token
+      responses:
+        '201':
+          description: CREATED
+        '401':
+          $ref: '#/components/schemas/Error401'
+        '403':
+          $ref: '#/components/schemas/Error403'
+        '422':
+          $ref: '#/components/schemas/Error422'
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  schemas:
+    Error422:
+      description: ERROR_FORMAT_PARAMS, ERROR_FORMAT_BODY, ERROR_FORMAT_QUERY
+      type: object
+      properties:
+        message:
+          type: string
+          example: ERROR_FORMAT_PARAMS
+        errors:
+          type: object
+          properties:
+            key:
+              type: object
+              properties:
+                message:
+                  type : string
+                  example : user_id is a required field
+    Error401:
+      description: ERROR_UNAUTHORIZED
+    Error403:
+      description: ERROR_FORBIDDEN
+    Error404:
+      description: ERROR_NOT_FOUND
+
+    Credential:
+      type: object
+      properties:
+        id:
+          type: string
+          example: abcd123
+        email:
+          type: string
+          example: test@gmail.com
+        password:
+          type: string
+          example: "***"
+        user_id:
+          type: string
+          example: user12312
+        created_at:
+          type: string
+          example: 2022-08-17T02:47:16.926Z
+        updated_at:
+          type: string
+          example: 2022-08-17T02:47:16.926Z
+        is_deleted:
+          type: boolean
+          example: false
+      required:
+        - id
+        - email
+        - password
+        - user_id
+        - is_deleted
+        - created_at
+        - updated_at
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: abcd123
+        email:
+          type: string
+          format: email
+          example: test@gmail.com
+        created_at:
+          type: string
+          example: 2022-08-17T02:47:16.926Z
+        updated_at:
+          type: string
+          example: 2022-08-17T02:47:16.926Z
+        is_deleted:
+          type: boolean
+          example:  false
+      required:
+        - id
+        - email
+        - created_at
+        - updated_at
+        - is_deleted
