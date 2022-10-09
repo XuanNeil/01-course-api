@@ -1,11 +1,16 @@
 import HttpStatusCodes from "http-status-codes";
 
-export abstract class CustomError extends Error {
-  public readonly HttpStatus = HttpStatusCodes.BAD_REQUEST;
+export type ErrorResponse = {
+  status: number;
+  message: string;
+};
 
-  constructor(msg: string, httpStatus: number) {
+export abstract class CustomError extends Error {
+  public readonly status = HttpStatusCodes.BAD_REQUEST;
+
+  constructor(msg: string, status: number) {
     super(msg);
-    this.HttpStatus = httpStatus;
+    this.status = status;
   }
 }
 

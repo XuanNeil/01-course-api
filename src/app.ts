@@ -15,6 +15,7 @@ import { CustomError } from "./contants/errors";
 // env configs
 dotenv.config();
 import env_vars from "./contants/env_vars";
+import { mainRouters } from "./routers";
 
 // **** Init express **** //
 const app = express();
@@ -39,13 +40,13 @@ if (env_vars.nodeEnv === NodeEnvs.Production) {
 // **** Add API routers **** //
 
 // Add APIs
-// app.use("/api/v1");
+app.use("/api/v1", mainRouters);
 
 // Setup error handler
 app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) => {
   logger.err(err, true);
   // Status
-  const status = err instanceof CustomError ? err.HttpStatus : StatusCodes.BAD_REQUEST;
+  const status = err instanceof CustomError ? err.status : StatusCodes.BAD_REQUEST;
   // Return
   return res.status(status).json({
     error: err.message,
