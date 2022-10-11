@@ -10,11 +10,11 @@ import swaggerUi from "swagger-ui-express";
 
 import logger from "jet-logger";
 import { NodeEnvs } from "./contants/node_envs";
-import { CustomError } from "./contants/errors";
 
 // env configs
 dotenv.config();
 import env_vars from "./contants/env_vars";
+import { CustomAPIError } from "./errors/custom-api";
 
 // **** Init express **** //
 const app = express();
@@ -42,10 +42,10 @@ if (env_vars.nodeEnv === NodeEnvs.Production) {
 // app.use("/api/v1");
 
 // Setup error handler
-app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) => {
+app.use((err: Error | CustomAPIError, _: Request, res: Response, __: NextFunction) => {
   logger.err(err, true);
   // Status
-  const status = err instanceof CustomError ? err.HttpStatus : StatusCodes.BAD_REQUEST;
+  const status = err instanceof CustomAPIError ? err.statusCode : StatusCodes.BAD_REQUEST;
   // Return
   return res.status(status).json({
     error: err.message,
